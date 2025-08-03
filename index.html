@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accessible Resource Speaker Cleaner</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+      color: #333;
+      text-align: center;
+      padding: 2em;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background-color: white;
+      padding: 2em;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+    }
+    h1 {
+      color: #2a4d9b;
+      font-size: 1.8em;
+    }
+    p {
+      font-size: 1.1em;
+      margin-bottom: 2em;
+    }
+    select {
+      padding: 0.5em;
+      font-size: 1em;
+      border-radius: 6px;
+      margin-bottom: 1em;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #2a4d9b;
+      color: white;
+      padding: 0.8em 2em;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1e3d7c;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Accessible Resource Speaker Cleaner</h1>
+    <p>This tool helps restore speaker clarity by using precise sound frequencies to expel moisture from your device. For optimal results, set your volume to maximum, hold the speaker facing downward, select a frequency, and press the button below.</p>
+    <select id="frequencySelect">
+      <option value="180">180 Hz</option>
+      <option value="500">500 Hz</option>
+      <option value="1000">1 kHz</option>
+      <option value="5000">5 kHz</option>
+      <option value="10000">10 kHz</option>
+
+    </select>
+    <br>
+    <button id="cleanButton" onclick="toggleBeep()">Start Cleaning</button>
+  </div>
+
+  <script>
+    let oscillator = null;
+    let isPlaying = false;
+    const context = new (window.AudioContext || window.webkitAudioContext)();
+
+    function toggleBeep() {
+      const button = document.getElementById('cleanButton');
+      const frequencySelect = document.getElementById('frequencySelect');
+      const frequency = parseFloat(frequencySelect.value);
+
+      if (!isPlaying) {
+        oscillator = context.createOscillator();
+        const gainNode = context.createGain();
+
+        oscillator.type = 'square';
+        oscillator.frequency.setValueAtTime(frequency, context.currentTime);
+        gainNode.gain.setValueAtTime(0.5, context.currentTime);
+
+        oscillator.connect(gainNode);
+        gainNode.connect(context.destination);
+
+        oscillator.start();
+        button.textContent = 'Stop Cleaning';
+        isPlaying = true;
+      } else {
+        if (oscillator) {
+          oscillator.stop();
+          oscillator = null;
+        }
+        button.textContent = 'Start Cleaning';
+        isPlaying = false;
+      }
+    }
+  </script>
+</body>
+</html>
